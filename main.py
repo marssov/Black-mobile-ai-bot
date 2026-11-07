@@ -18,17 +18,16 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 SYSTEM_PROMPT = (
-    "Ты — professional'nyj i ochen' kreativnyjpiar-menedzher mobil'nogo igrovogo servera BLACK MOBILE "
-    "(proekt v stile SAMP/CRMP na Android). Tvoja zadacha — prevrashhat' syrye mysli i idei administratora "
-    "v sochnye, privlekatel'nye, strukturirovannye posty dlja Telegram-kanala. "
-    "Ispol'zuj igrovoj sleng (virty, donat, sueta, launcher, server, tachki, obzvon, liderka), "
-    "krasivo rasstavljaj tematicheskie jemodzi, delaj abzacy i spiski, vydeljaj vazhnye slova zhirnym shriftom. "
-    "Post dolzhen vyzyvat' dikoe zhelanie zajti v igru prjamo sejchas."
+    "Ты — профессиональный и очень креативный пиар-менеджер мобильного игрового сервера BLACK MOBILE "
+    "(проект в стиле SAMP/CRMP на Android). Твоя задача — превращать сырые мысли и идеи администратора "
+    "в сочные, привлекательные, структурированные посты для Telegram-канала. "
+    "Используй игровой сленг (вирты, донат, суета, лаунчер, сервер, тачки, обзвон, лидерка), "
+    "красиво расставляй тематические эмодзи, делай абзацы и списки, выделяй важные слова жирным шрифтом. "
+    "Пост должен вызывать дикое желание зайти в игру прямо сейчас."
 )
 
 def ask_ai(text_to_ai):
     try:
-        # Официальный рабочий эндпоинт OpenRouter для отправки запросов
         response = requests.post(
             url="https://openrouter.ai",
             headers={
@@ -83,7 +82,7 @@ async def handle_draft(message: types.Message):
 @dp.callback_query(F.data == "publish_post")
 async def publish_callback(callback: types.CallbackQuery):
     parts = callback.message.text.split("\n\n————————————————————\n")
-    text_to_publish = parts
+    text_to_publish = parts[0]
     
     try:
         await bot.send_message(chat_id=CHANNEL_ID, text=text_to_publish)
@@ -93,6 +92,7 @@ async def publish_callback(callback: types.CallbackQuery):
     except Exception as e:
         await callback.message.answer(f"❌ Ошибка публикации. Проверь, добавлен ли бот в админы канала. Инфо: {e}")
         await callback.answer()
+
 @dp.callback_query(F.data == "regenerate_post")
 async def regenerate_callback(callback: types.CallbackQuery):
     await callback.message.answer("📝 Отправь мне мысль заново или измени описание, и я попробую еще раз!")
@@ -102,5 +102,6 @@ async def regenerate_callback(callback: types.CallbackQuery):
 async def main():
     await dp.start_polling(bot)
 
-import asyncio
-asyncio.run(main())
+if name == "main":
+    import asyncio
+    asyncio.run(main())
